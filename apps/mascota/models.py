@@ -13,5 +13,5 @@ class Mascota(models.Model):
 	sexo = models.CharField(max_length=10)
 	edad_aproximada = models.IntegerField()
 	fecha_rescate = models.DateField()
-	Persona = models.ForeignKey(Persona, null=True, blank=True, on_delete=models.CASCADE) #Relacion uno a muchos
+	persona = models.ForeignKey(Persona, null=True, blank=True, on_delete=models.CASCADE) #Relacion uno a muchos
 	vacuna = models.ManyToManyField(Vacuna) #Relacion muchos a muchos
