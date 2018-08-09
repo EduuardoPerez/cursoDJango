@@ -1,0 +1,179 @@
+- Buscar en la pagina de git como instalarlo segun el S.O.
+
+- Configurar nombre
+		git config --global user.name
+
+- Configurar correo
+		git config --global user.email "mail@mail.com"
+
+- Configurar el observar en distintos colores los resultados de Git en la terminal
+		git config --global color.ui true_o_false
+
+- Ver la configuracion
+		git config --global --list
+
+- Iniciar proyecto, marcar inicio del comienzo, comenzar a utilizar git en un proyecto
+		git init
+
+- Estado de nuestro proyectos, archivos agregados y por agregar
+		git status
+
+- Agregar uno o varios archivos al commit
+		git add
+
+- Agregar todos los archivos que esten pendientes por agregar al commit
+		git add -A
+
+- Guardar cambios con un mensaje para identificarlos
+		git commit -m "Mensaje"
+
+- Cambiar mensaje al commit en el que estamos, se debe forzar la subida del commit para que se guarde el cambio del mensaje
+		git commit --amend -m "Nuevo mensaje"
+
+- Lista de commits
+		git log
+
+- Generar txt con la lista de commits
+		git log > commits.txt
+
+- Posicionarse en otro commit o rama
+		git checkout nombre_de_la_rama_o_codigo_SHA_del_commit
+
+- Eliminar un commit o una rama sin afectar el working area
+		git reset --soft nombre_de_la_rama_o_codigo_SHA_del_commit
+
+- Eliminar un commit o una rama sin afectar el working area ni el staging area
+		git reset --mixed nombre_de_la_rama_o_codigo_SHA_del_commit
+
+- Eliminar todo hasta el commit o rama en la que se este, junto con lo que hay en el working area
+		git reset --hard
+
+- Manual
+		git help
+
+- Explicacion de como funciona un comando de git
+		git help comando
+
+- Mostrar las ramas del proyecto
+		git branch
+
+- Mostrar las ramas y las ramas ocultas del proyecto
+		git branch -a
+
+- Crear rama
+		git branch nombre_de_la_ramma
+
+- Crear rama y moverse hasta ella
+		git checkout -b nombre_de_la_rama
+
+- Eliminar rama
+		git branch -D nombre_de_la_rama
+
+- Fusionar ramas, desde la rama que va a absorber
+		git merge rama_que_sera_absorbida
+
+- Mensajes al hacer el 'git merge'
+		01 - Fast forward -> No hubo problemas al fusionar las ramas
+		02 - Manual merge -> Mostrara los cambios y hay que cambiarlos
+
+- Clonar proyecto
+		git clone link_para_clonar_el_proyecto_via_HTTP_o_SSH
+
+- Vincular repositorio local con repositorio remoto
+		git remote add origin link_del_repositorio_remoto_HTTP_O_SSH
+
+- Observar si se establecio la conexion entre el repositorio local y el repositorio remoto
+		git remote -v
+
+- Eliminar conexion entre el repositorio remoto y el repositorio local
+		git remote remove origin
+
+- Subir los cambios del repositorio local al repositorio remoto
+		git push origin nombre_de_la_rama_a_subir
+
+- Forzar el subir los cambio del repositorio local al repositorio remoto
+		git push origin nombre_de_la_rama_a_subir -f
+
+- Agregar tag anotada a un commit
+		git tag -a vX.X -m "Mensaje"
+
+- Agregar tag ligera
+		git tag vX.X
+
+- Agregar tag anotada o ligera a un commit especifico
+		git tag -a vX.X -m "Mensaje" codigo_SHA_del_commit
+
+- Subir tags al repositorio remoto
+		git push origin version_de_nuestra_tag
+
+- Subir todos los tags pendientes por subir
+		git push origin --tags
+
+- Bajar cambios del repositorio remoto al repositorio local
+		git fetch origin
+
+- Mezclar los cambios que se bajaron del repositorio remoto con el repositorio local
+		git merge origin/nombre_de_la_rama_que_bajamos
+
+- Bajar cambios del repositorio remoto y mezclarlos con el repositorio local
+		git pull origin nombre_de_la_rama
+
+- Flujo de trabajo
+		01 - Hay cambios en el repositorio remoto, nosotros tenemos nuestro cambios en el repositorio local
+		02 - Hacemos 'git fetch origin' para pasarlos a la rama oculta origin/master
+		03 - Combinamos la rama 'origin/master' con el comando 'git merge origin/master' para obtener los cambios que habian en ella
+		04 - Y por ultimo, despues de hacer las modificaciones se sube al repositorio remoto con 'git push origin master'
+
+- Bajar cambios de un repositorio de terceros (repositorio al que hicimos Fork)
+		git fetch upstream/master
+
+- Github Pages
+		01 - Crear un respositorio con el nombre: nombre_de_usuario_de_Github.github.io
+		02 - Se accede desde el dominio: nombre_de_usuario_de_Github.github.io
+		03 - Si es un proyecto de una comunidad: nombre_de_la_comunidad_en_Github.github.io
+		04 - Sitios web para nuestros proyectos:
+					Crear la rama: git branch gh-pages
+					Se accede desde:
+						- nombre_de_usuario_de_Github.github.io/nombre_del_repositorio
+						- nombre_de_la_comunidad_en_Github.github.io/nombre_del_repositorio
+
+- Generar llave SSH en sistemas Unix
+		ssh-keygen
+
+- Buscas llave SSH
+		01 - Ir al directorio donde se creo
+		02 - Ver los archivos ocultos con el comando 'ls -rf'
+		03 - Ir al directorio '.ssh'
+		04 - Abrir el archivo que la contiene con el editor cat mediante el comando 'cat id_rsa.pub'
+
+- Configurar llave SSH en Github
+		01 - Ir a los ajustes (settings) de Github
+		02 - Ir a la seccion SSH and GPG keys
+		03 - Agregar la llave SSH
+
+- Crear archivo .gitignore, para evitar subir archivos innecesarios ala repositorio remoto
+		touch .gitignore
+
+- Hooks de Git
+		01-	applypatch-msg
+		02- pre-applypatch
+		03- post-applypatch
+		04- pre-commit
+		05- prepare-commit-msg
+		06- commit-msg
+		07- post-commit
+		08- pre-rebase
+		09- post-checkout
+		10- post-merge
+		11- pre-receive
+		12- update
+		13- post-receive
+		14- post-update
+		15- pre-auto-gc
+		16- post-rewrite
+		17- pre-push
+
+- Ubicacion de los Hooks
+		01- Ver las carpetas ocultas del proyecto con 'ls -rf'
+		02- Acceder a la carpeta .git
+		03- Acceder a la carpeta hooks

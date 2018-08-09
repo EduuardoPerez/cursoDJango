@@ -1,0 +1,286 @@
+-------------------------------- CREAR PROYECTO ------------------------------
+
+	El
+	
+		django-admin.py
+	
+	es la utilidad de linea de comandos de DJango, es la que nos apoya para poder crear proyectos, aplicaciones y super usuarios.
+
+	Comandos:
+		1- django-admin.py startproject nombre_del_proyecto
+		2- django-admin.py startapp nombre_de_la_app
+		2- django-admin.py createsuperuser
+
+
+	El
+	
+		manage.py
+
+	es un empaquetador de django-admin.py, nos ayuda a crear migraciones. Hacer
+	migraciones, correr el servidor, o ver todo el SQL que se crean en las migraciones.
+
+	Comandos:
+		1- manage.py makemigrations
+		2- manage.py migrations
+		3- manage.py runserver
+
+
+------------------------------------------------------------------------------
+
+--------------- CREAR APLICACIONES Y ESTRUCTURA DEL PROYECTO -----------------
+
+	Para ver la estructura del proyecto ver este video - video 2 - del curso
+
+	Un proyecto en DJango es nuestra aplicacion web.
+
+	Las aplicaciones que se crean con el comando
+
+		django-admin.py startapp nombre_de_la_app
+
+	Son aplicaciones que se crean dentro del proyecto de DJango, pero debemos saber
+	distinguir entre lo que es nuestra aplicacion web (el proyecto en si) y una
+	aplicacion de DJango (modulo o funcionalidad de nuestro proyecto (aplicacion
+	web)).
+
+
+------------------------------------------------------------------------------
+
+--------------------------- MODELOS Y MIGRACIONES ----------------------------
+
+	Un modelo es la fuente unica y definitiva de los datos de nuestra aplicacion
+	Podemos definir un modelo como una tabla en nuestra base de datos
+
+	Los modelos son clases que van a heredar de la clase
+
+		django.db.models.Model
+
+	Por eso tienen atributos, y los atributos van a corresponder a los campos de
+	nuestra tabla.
+
+	Cuando se crean los modelos, no es absolutamente necesario colocarle un ID,
+	esto porque DJango le coloca de manera automatica un campo ID de tipo autoincrementable
+	en la base de datos.
+
+	Una llave, o clave primaria identifica de manera única cada fila de una tabla.
+	En los modelos de DJango se puede indicar cual sera esta al momento de crearlos.
+	Esto indicando en uno de los atributos que ese sera la llave primaria, pasando
+	como parametro primary_key=True:
+
+		atributo = models.CharField(primary_key=True)
+
+	de esta forma se dejaria de utilizar el ID que genera por defecto DJango y se
+	comienza a utilizar esta para identificar los campos de la tabla.
+
+------------------------------------------------------------------------------
+
+-------------------------------- RELACIONES ----------------------------------
+
+	- Relacion de uno a muchos, campo: ForeignKey
+			Se define de la siguiente manera: despues de haber declarado nuestro modelo
+			le asignamos la llave foranea como se muestra en el siguiente ejemplo:
+
+				class Persona(models.Model):
+					atributos...
+
+				class Mascota(models.Model):
+					persona = models.ForeignKey(Persona, null=True, blank=True, on_delete=models.CASCADE)
+					atributos...
+
+			Donde el atributo persona del modelo Mascota va a ser la llave foranea y
+			le pasaremos como parametro el modelo al cual va a apuntar (Persona en este
+			caso, el cual ya se definio con aterioridad), el parametro null=True permitira
+			guardar valores nulos en la base de datos, el parametro blank=True permite
+			guardar en la base de datos sin haber haber ingresado ningun dato en el
+			campo persona, el argumento on_delete=models.CASCADE lo pasamos para que
+			cuando se borre un registro del modelo Persona, automaticamente se eliminen los registros que estes relacionados con el.
+
+	- Relacion uno a uno, campo: OneToOneField
+			La manera en como lo aplicamos a los modelos es igual a como lo hicimos
+			con la relacion de uno a muchos:
+
+				class Persona(models.Model):
+					atributos...
+
+				class Mascota(models.Model):
+					persona = models.OneToOneField(Persona, null=True, blank=True, on_delete=models.CASCADE)
+					atributos...
+
+	- Muchos a muchos, campo: ManyToManyField
+			Cuando se trabaja con la relacion de muchos a muchos lo que sea hace es
+			que se crea otra tabla que va a contener los id de ambas tablas.
+
+			Por ejemplo, si tenemos un modelo llamado Vacuna y lo queremos relacionar
+			con otro modelo llamado Mascota, seria algo como:
+
+				Class Vacuna(models.Model):
+					atributos...
+
+				Class Mascota(models.Model):
+					vacuna = models.ManyToManyField(Vacuna)
+					atributos...
+
+	En DJango podemos registrar nuestros modelos para que podamos manipularlos desde
+	el administrador que nos trae este framework. Para esto, escribiremos en el
+	archivo admin que se encuentra dentro de cada aplicacion:
+
+		admin.site.register(modelo)
+
+	Luego de haberlo importado.
+
+------------------------------------------------------------------------------
+
+------------------------- DJango Shell y Querysets ---------------------------
+
+	El api shell de DJango nos brinda la facilidad de poder interactuar con nuestros
+	modelos y objetos mediante el
+
+	Los querysets, permiten realizar lecturas, filtrado y ordenamientos en la base
+	de datos.
+
+	Lo primero que se hace al querer interactuar con los modelos, es importarlos
+
+	El shell de DJango inicia con el comando
+
+		manage.py shell
+
+	Y los modelos se importan de igual manera que como se hace en los .py
+
+		from directorio.aplicacion.models import Modelo
+
+
+	Para registrar un objeto desde el shell de DJango se puede hacer de dos maneras:
+
+		- Modelo.objects.create(atributo1 = valor,
+														atributo2 = valor,
+																		-
+																		-
+																		-
+														atributo n = valor)
+
+		- Asignar a una variable los atributos del modelo
+
+				variable = Modelo(atributo1 = valor,
+												  atributo2 = valor,
+															    -
+																	-
+																	-
+													atributo n = valor)
+
+			Se guarda el objeto con
+
+				variable.save()
+
+
+	Desde el shell de DJango se puede asignar la llave foranea a un objeto de la
+	BD.
+
+	Con el Queryset:
+
+		Modelo.objects.all()
+
+	se muestra en el shell los objetos que hay en el Modelo
+
+
+	Se puede filtrar utilizando el metodo filter:
+
+		Modelo.objects.filter(valor_para_filtrar)
+
+		por ejemplo
+
+		Persona.objects.filter(id=2)
+		Persona.objects.filter(nombre__contains="Jose")
+
+
+
+		Ejemplo del uso del Shell
+
+			(curDJango) D:\Cursos\codigofacilito\DJango\cursoDjango>manage.py shell
+			Python 3.7.0 (v3.7.0:1bf9cc5093, Jun 27 2018, 04:06:47) [MSC v.1914 32 bit (Intel)] on win32
+			Type "help", "copyright", "credits" or "license" for more information.
+			(InteractiveConsole)
+			>>> from apps.mascota.models import Vacuna, Mascota
+			>>> from apps.adopcion.models import Persona
+			>>> Persona.objects.create(nombre = "Eduardo",
+			... apellidos = "Perez",
+			... edad = 23,
+			... telefono = "1165801254",
+			... email = "edujpp1@gmail.com",
+			... domicilio = "Libertad 942")
+			<Persona: Persona object (1)>
+			>>> variable = Persona(nombre = "Eduardo Jose",
+			... apellidos = "Perez Pe#a",
+			... edad = 23,
+			... telefono = "1165801254",
+			... email = "edujpp@hotmail.com",
+			... domicilio = "Argentina")
+			>>> variable.save()
+			>>> mascota1 = Mascota(nombre = "Luca",
+			... sexo = "Macho"
+			... , edad_aproximada = 2,
+			... fecha_rescate = "2018-07-24",
+			... persona = variable)
+			>>> mascota1.save()
+			>>> v1 = Vacuna(nombre = "vacuna 1")
+			>>> v1.save()
+			>>> v2 = Vacuna(nombre = "vacuna 2")
+			>>> v2.save()
+			>>> mascota1.vacuna.add(v1, v2)
+			>>> Persona.objects.all()
+			<QuerySet [<Persona: Persona object (1)>, <Persona: Persona object (2)>]>
+			>>> Persona.objects.filter(id=2)
+			<QuerySet [<Persona: Persona object (2)>]>
+			>>> Persona.objects.filter(nombre__contains="Jose")
+			<QuerySet [<Persona: Persona object (2)>]>
+			>>> exit()
+
+------------------------------------------------------------------------------
+
+--------------------- CONFIGURAR URLS Y PRIMERA VIEW -------------------------
+
+	Para comenzar a crear las vistas, iremos al archivo views.py. En el, importaremos la clase HttpResponse con la sentencia
+
+		from django.http import HttpResponse
+
+	En el archivo settings.py que se crea cuando creamos el proyecto tenemos la variable 
+
+		ROOT_URLCONF
+
+	Que es a la que se le asigna lo que son las URLS globales de nuestro proyecto
+ que se encuentran en el mismo directorio, en el archivo urls.py.
+
+
+	En el archivo
+
+		urls.py
+
+	Es donde podemos incluir las urls de cada una de nuestras aplicaciones. Pero,
+	para yo poder incluir las urls de las apps, hay que crear en la app, un archivo que se llame urls.py. Este tendra un contenido similar al que es generado
+	por python en el archivo url.py global.
+
+	Dentro de la variable
+
+		urlpatterns
+
+	Sera en donde vamos a listar las urls de las aplicaciones. Seria al como
+
+		from django.contrib import admin
+		from apps.mascota.views import index
+
+		urlpatterns = [
+		    path('', index),
+		]
+
+	En el metodo path, el primer parametro es la url, como en este caso es un index
+	se coloca vacio.
+	El segundo parametro es la vista que se va a ejecutar al momento en que reciba
+	esa peticion de la url.
+
+	Para poder incluir estas urls en las urls globales. Se crea una url en el archivo global de urls y se le indica que url incluira:
+
+		urlpatterns = [
+		    path('admin/', admin.site.urls),
+		    path('admin/', include('apps.mascota.url')),
+		]
+
+
+------------------------------------------------------------------------------
