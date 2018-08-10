@@ -406,8 +406,38 @@
 
 ------------------------------------------------------------------------------
 
+------------------------- HERENCIA DE PLANTILLAS -----------------------------
+
+	Se hereda entre templates con el tag extendes, mediante la siguiente sintaxis
+
+		{% extends 'ruta/template.html' %}
+
+
+	Desde las vistas, se llaman a los templates utilizando el shortcuts render,
+	por ejm:
+
+		def index(request):
+			return render(request, 'ruta/template.html')
+
+	Para sobreescribir los bloques de las plantillas heredadas se abre y se cierra
+	el bloque en la platnilla que esta heredando y se colcoa el contenido que se
+	quiere tener.
+
+	El sistema de plantillas de DJango tambien nos permite hacer includes. Esto
+	el tag include:
+
+		{% include 'ruta/template.html' %}
+
+	Sin embargo, no es muy recomendable.
+
+
+	En los templates base no es muy recomendable cargar los archivos CSS y JS
+	que vamos	a utilizar, pues, puede suceder que hayan templates donde no haga
+ 	falta cargar todos estos archivos. Una buena practica es crear un bloque 'extrahead'
+ 	para colocar luego en los templates los CSS y un extrajs para colocar los JS.
+
 ------------------------------------------------------------------------------
 
-
+----------------------- CONFIGURAR ARCHIVOS ESTATICOS ------------------------
 
 ------------------------------------------------------------------------------
