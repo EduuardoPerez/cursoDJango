@@ -440,4 +440,26 @@
 
 ----------------------- CONFIGURAR ARCHIVOS ESTATICOS ------------------------
 
+	Para indicarle a DJango donde tiene que buscar nuestros archivos estaticos debemos
+	ir al documento
+
+		settings.py
+	
+	Declaramos otra variable, que se llamara
+
+		STATICFILES_DIRS
+
+	Y le indicaremos donde tiene que buscar los archivos:
+
+		STATICFILES_DIRS = (os.path.join(BASE_DIR, 'nombre_de_la_carpeta_donde_estan_los_archivos_estaticos'), )
+
+	La etiqueta static
+
+		<link rel="stylesheet" href="{% static 'css/boostrap.min.css' %}">
+		<script src="{% static 'js/boostrap.min.js' %}"></script>
+
+	Es necesaria para poder hacer referencia a todos nuestros archivos estaticos.
+	El tag static lo que hace es arrojar la ruta absoluta donde se encuentra alojado
+	el archivo
+
 ------------------------------------------------------------------------------
