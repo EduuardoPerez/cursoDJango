@@ -284,3 +284,130 @@
 
 
 ------------------------------------------------------------------------------
+
+----------------------------- SISTEMA PLANTILLAS -----------------------------
+
+	Los sistemas de plantillas permiten separar todo lo que es la logica de nuestra
+	aplicacion, del aspecto visual, lo que viene siendo nuestro HTML.
+
+	Herramientas del sistema de plantillas de DJango:
+		- Variables
+		- Tags (etiquetas)
+		- Herencia 
+
+
+	Las VARIABLES las vamos a identificar porque van a estar encerradas entre llaves dobles, ejm:
+
+		<tbody>
+			<tr>
+				<td>{{ mascota.nombre }}</td>
+				<td>{{ mascota.edad_aproximada }}</td>
+				<td>{{ mascota.fecha_rescate }}</td>
+			</tr>
+		</tbody>
+
+	Esto lo vamos a utilizar cuando queramos renderizar, o mostrar, valores que 
+	hemos enviado en el contexto (informacion enviada por la vista al template)
+	de nuestras vistas.
+
+
+
+	Los TAGS se encuentran encerrados entre llaves y signos de porcentajes. Por
+	ejemplo con el flujo de control for, seria:
+
+		<tbody>
+			{% for mascota in mascotas %}
+				<tr>
+					<td>{{ mascota.nombre }}</td>
+					<td>{{ mascota.edad_aproximada }}</td>
+					<td>{{ mascota.fecha_rescate }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+
+	Estos nos brindan la facilidad de realizar flujo de control o carga informacion
+	externa de los templates.
+
+	Un ejemplo con la sentencia if, seria:
+
+		<tbody>
+			{% if mascotas %}
+			{% for mascota in mascotas %}
+				<tr>
+					<td>{{ mascota.nombre }}</td>
+					<td>{{ mascota.edad_aproximada }}</td>
+					<td>{{ mascota.fecha_rescate }}</td>
+				</tr>
+			{% endfor %}
+			{% else %}
+				<h4> No existen registros de mascotas </h4>
+			{% endif %}
+		</tbody>
+
+		El tag de load staticfiles nos va a servir en todos nuestros templates para
+		cargar, o servir, nuestro archivos estaticos, que se debe colocar unicamente
+		antes de cargar los archivos estaticos. Ejm:
+
+			<!DOCTYPE html>
+			<html lang="es">
+			<head>
+				{% load staticfiles %}
+				<meta charset="utf-8">
+				<title>Document</title>
+				}
+			</head>
+			<body>
+			
+			</body>
+			</html>
+
+
+
+	La HERENCIA DE PLANTILLAS, reduce la duplicacion y redundancia de elementos
+	comunes de los templates, como un title, un header, un navbar, un footer.
+
+	Gracias a la herencia de plantillas, lo que haremos sera crear un esceleto o
+	un documento base el cual va a contener estos elementos que necesitan replicarse,
+	y en nuestros otros templates podremos heredar estas plantillas, mediante otro
+	tag que se llama extends, y asi extendiendo del archivo base podremos sobreescribir
+	toda esta parte de la estructura.
+
+	La ubicacion de las plantillas se le indican a DJango desde el archivo
+
+		settings.py
+
+	buscar la variable
+
+		TEMPLATES
+
+	dentro de ella buscaremos el elemeto
+
+		DIRS
+
+	y dentro del arreglo escribiremos
+
+		os.path.join(BASE_DIR, 'templates')
+
+	que quiere decir: buscame una carpeta que se llama templates que esta en la
+	raiza de la carpeta contenedora del proyecto.
+
+	El elemento
+
+		APP_DIRS
+
+	que se encuentra dentro de la variable TEMPLATES, cuando esta en True, quiere
+	decir que cuando se busque un template tambien lo va a buscar dentro de la carpeta
+	de cada una de nuestras aplicaciones, es decir, podemos organizar nuestros templates de dos maneras:
+
+		1- Una sola carpeta en la raiz de la carpeta contenedora de nuestro proyecto
+		donde podemos almacenar todos nuestros templates.
+		2- En cada aplicacion, dentro de ella, generamos otro directorio que se llame
+		templates, el cual va a contener nuestros templates de nuestras aplicaciones.
+
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------
