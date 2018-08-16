@@ -466,6 +466,221 @@
 
 -------------- FORMULARIOS Y VISTAS BASADAS EN FUNCIONES CREAR ---------------
 
+	Se crearan formularios para agregar registros a nuestros modelos.
+
+	Los forms de DJango se importan con
+
+		from django import forms
+
+	Y se puede utilizar en funciones como:
+
+		class NombreFuncion(forms.ModelForm)
+
+	Se crea una clase meta dentro de la clase anterior y aca se le indica de que
+	modelo va a ser el formulario
+
+		class NombreFuncion(forms.ModelForm):
+
+			class Meta:
+				model = NombreModelo
+
+	Los campos que queremos que tenga nuestro formulario se agregan como una lista
+	por medio de declarar fiels:
+
+		class MascotaForm(forms.ModelForm):
+
+		class Meta:
+			model = NombreModelo
+
+			fields = [
+				'campo1',
+				'campo2',
+				'   -  ',
+				'   -  ',
+				'   -  ',
+				'campoN',
+			]
+
+	Luego se agregan los labels que tendran cada cada campo
+
+		class Meta:
+			model = NombreModelo
+
+			fields = [
+				'campo1',
+				'campo2',
+				'   -  ',
+				'   -  ',
+				'   -  ',
+				'campoN',
+			]
+			labels = {
+				'campo1': 'descripcion1',
+				'campo2': 'descripcion2',
+				'   -  ': '      -     ',
+				'   -  ': '      -     ',
+				'   -  ': '      -     ',
+				'campoN': 'descripcionN',
+			}
+
+	Y por ultimo los widgets, que son las etiquetas HTML que veremos en el navegador
+	pueden ser TextInput, select, CheckBox y etiquetas especiales que trae DJango:
+
+		class Meta:
+			model = NombreModelo
+
+			fields = [
+				'campo1',
+				'campo2',
+				'   -  ',
+				'   -  ',
+				'   -  ',
+				'campoN',
+			]
+			labels = {
+				'campo1': 'descripcion1',
+				'campo2': 'descripcion2',
+				'   -  ': '      -     ',
+				'   -  ': '      -     ',
+				'   -  ': '      -     ',
+				'campoN': 'descripcionN',
+			}
+			widgets = {
+				'campo1',: forms.TipoDeEtiquetaHTML(attrs={'parametroCSS':'valorDelParametroCSS'}),
+				'campo2',: forms.TipoDeEtiquetaHTML(attrs={'parametroCSS':'valorDelParametroCSS'}),
+															-
+															-
+															-
+				'campoN',: forms.TipoDeEtiquetaHTML(attrs={'parametroCSS':'valorDelParametroCSS'}),
+			}
+
+
+	Una vez que se crea el formulario, se procede con la vista. Que sera la que
+	va a recibir la peticion y se va a ejecutar. Por ahora trabajaremos con vistas
+	basadas en funciones. Las vistas basadas en funciones, son de versiones antiguas
+	de DJango, pero no esta demas conocerlas, pues su uso es poco, pero lo hay.
+
+	Un ejemplo de vista seria:
+
+		def mascota_view(request):
+			if request.method == 'POST':
+				form = MascotaForm(request.POST)
+				if form.is_valid():
+					form.save()
+				return redirect('mascota:index')
+			else:
+				form = MascotaForm()
+			return render(request, 'mascota/mascota_form.html', {'form':form})
+
+
+	Que en pseudocodigo seria
+
+		definicion de la vista basada en funcion
+			Si el request es un POST
+				Se recibiran los datos que se estan enviando en el POST de nuestro form
+				Si los datos ingresados son validos
+					Se guardan
+				Se redirige a ('NombreDeEspacio':'Url')
+			Sino
+				Se vuelve a cargar el form
+			Se retorna la respuesta con render(request, 'nombreDelTemplate', {'contexto':contenido})
+
+
+	El formulario se importaria en la vista con
+
+		from apps.mascota.forms import MascotaForm
+
+	Para que la vista sea redirigida con la sentencia
+
+		return redirect('mascota:index')
+
+	Es necesario ya haber declarado el espaciado de nombre de 'mascota' en el archivo principal settings.py con la sentencia
+
+		path('mascota/', include(('apps.mascota.urls', 'mascota'), namespace="mascota")),
+
+	Y para utilizar el 'index', se debe agregar en la variable urlpatterns del 
+	archivo urls.py de la apps mascotas la sentencia:
+
+	urlpatterns = [
+    path('', index, name='index'),
+    path('nuevo', mascota_view, name='mascota_crear'),
+	]
+
+	Es igual para cualquier otra vista o app.
+
+
+	para que funcione el shortcut redirec se debe agregar con
+
+		from django.shortcuts import redirect
+
+		o, si son varios shortcuts:
+
+			from django.shortcuts import render, redirect
+
+
+
+	Luego si se puede modificar el template para indicar como se vera el form con
+	algo tan sencillo como:
+
+		{% extends 'base/base.html' %}
+
+		{% block content %}
+			<form method="post">
+				{% csrf_token %}
+				{{ form.as_p }}
+				<button type="submit">Guardar</button>
+			</form>
+		{% endblock %}
+
+
+	Hay que recordar que en nuestra vista le estamos enviando el contexto, que es
+	nuestro form, en la ultima sentencia
+
+		return render(request, 'mascota/mascota_form.html', {'form':form})
+
+	En la sentencia
+
+		{{ form.as_p }}
+
+	Estamos metiendo en una variable el form que estamos recibiendo en el contexto y con el 'as_p' se le esta indicando que se dibujara en el navegador
+	el form como parrafo. Es decir, dentro de puras etiquetas HTML <p>
+
+	Tambien podriamos crear los divs de 'form-group' y acceder a cada elemento del
+	form de la manera:
+
+		{{ form.nombreDelAtributo }}
+
+	Y mostraria en el navegador solo esa etiqueta.
+
+	El token de seguridad que nos provee DJango
+
+		{% csrf_token %}	
+
+	es muy importante incluirlo en todos los formularios, comenzando porque si no
+	lo hacemos, nos marcara un error.
+
+
+	Para que la llave foranea (persona) y el campo ManyToMany (vacuna) muestren
+	su contenido y no los objetos como tal se debe agregar en los models la funcion
+
+		def __str__(self):
+			return "{} {}".format(self.nombre, self.nombre)
+
+	Esto devolvera en el modelo de la app adopcion cuando se acceda al objeto,
+	los atributos del primer y segundo campo
+
+	Y en la app mascota, en el modelo vacuna
+
+		def __str__(self):
+			return '{}'.format(self.nombre)
+
+	Devolvera el nombre de la vacuna.
+
+------------------------------------------------------------------------------
+
+--------------- LISTAR REGISTROS (VISTAS BASADAS EN FUNCIONES) ---------------
+
 
 
 ------------------------------------------------------------------------------
+
