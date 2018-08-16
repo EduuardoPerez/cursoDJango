@@ -460,6 +460,12 @@
 
 	Es necesaria para poder hacer referencia a todos nuestros archivos estaticos.
 	El tag static lo que hace es arrojar la ruta absoluta donde se encuentra alojado
-	el archivo
+	el archivo.
+
+------------------------------------------------------------------------------
+
+-------------- FORMULARIOS Y VISTAS BASADAS EN FUNCIONES CREAR ---------------
+
+
 
 ------------------------------------------------------------------------------
