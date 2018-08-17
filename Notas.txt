@@ -733,3 +733,88 @@
 		Esta es una manera muy sencilla de listar los registros de nuestros modelos.
 
 ------------------------------------------------------------------------------
+
+------------- VISTAS BASADAS EN FUNCIONES ACTUALIZAR Y ELIMINAR --------------
+
+	Se creo la vista para editar un modelo de la app mascota
+
+	def mascota_edit(request, id_mascota):
+		mascota = Mascota.objects.get(id=id_mascota)
+		if request.method == 'GET':
+			form = MascotaForm(instance=mascota)
+		else:
+			form = MascotaForm(request.POST, instance=mascota)
+			if form.is_valid():
+				form.save()
+			return redirect('mascota:mascota_listar')
+		return render(request, 'mascota/mascota_form.html', {'form':form})
+
+	En pseudocodigo:
+
+	- Definicion de la vista basada en funcion que recibe el parametro request y un id
+		- Se crea el QuerySet que obtendra el objeto al cual corresponde el objeto
+			que se le esta enviando
+		- Si el metodo es un GET
+			- Cargara la informacion del form con una instancia del obj que se cargo
+				en la variable mascota con el QuerySet
+		- Sino
+			- Toma el POST del form y se instancia el obj mascota que fue el que capturamos
+				para que se guarden los cambios que estamos mandando
+			- Si el form es valido
+				- Guarda los cambios
+			- Redirige al listado de las mascotas
+		- Se retorna un render al mismo template que se utiliza para registrar mascotas
+			enviando como contexto el form
+
+
+	Para que la url sea dinamica y muestre el form con los datos cargados de la
+	mascota seleccionada se coloca
+
+		path('editar/<int:id_mascota>/', mascota_edit, name='mascota_editar'),
+
+	Con la expresion regular
+
+		<int:id_mascota>
+
+	Recibe el segundo parametro que le estamos enviando.
+
+
+
+	Para llegar a la vista de editar se agrego en el mascota_list.html un boton
+	que redirige a la url de editar:
+
+		<a class="btn btn-primary" href="{% url 'mascota:mascota_editar' mascota.id %}">Editar</a>
+
+	Se redirecciona en el tag url
+
+		{% url 'mascota:mascota_editar' mascota.id %}
+
+	Que recibe como primer parametro la url que creamos para editar y como segundo
+	parametro el id de la mascota
+
+
+	El codigo para eliminar es relativamente similar:
+
+	def mascota_delete(request, id_mascota):
+		mascota = Mascota.objects.get(id=id_mascota)
+		if request.method == 'POST':
+			mascota.delete()
+			return redirect('mascota:mascota_listar')
+		return render(request, 'mascota/mascota_delete.html', {'mascota':mascota})
+
+	En pseudocodigo
+
+	- Definicion de la vista basada en funcion que recibe el parametro request y un id
+		- Se crea el QuerySet que obtendra el objeto al cual corresponde el objeto
+			que se le esta enviando
+		- Si el metodo es un POST
+			- Llamamos al obj que obtuvimos y lo eliminamos
+			- Retorna al listado
+		- Retorna un render al template delete enviando como contexto el obj mascota
+
+
+	Se puede organizar la tabla para que salga ordenada por el id. Esto es con:
+
+		mascota = Mascota.objects.all().order_by('id')
+
+------------------------------------------------------------------------------
