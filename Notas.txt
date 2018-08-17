@@ -132,12 +132,14 @@
 ------------------------- DJango Shell y Querysets ---------------------------
 
 	El api shell de DJango nos brinda la facilidad de poder interactuar con nuestros
-	modelos y objetos mediante el
+	modelos y objetos mediante el.
 
 	Los querysets, permiten realizar lecturas, filtrado y ordenamientos en la base
 	de datos.
 
 	Lo primero que se hace al querer interactuar con los modelos, es importarlos
+
+
 
 	El shell de DJango inicia con el comando
 
@@ -575,15 +577,15 @@
 
 	Que en pseudocodigo seria
 
-		definicion de la vista basada en funcion
-			Si el request es un POST
-				Se recibiran los datos que se estan enviando en el POST de nuestro form
-				Si los datos ingresados son validos
+		- Definicion de la vista basada en funcion
+			- Si el request es un POST
+				- Se recibiran los datos que se estan enviando en el POST de nuestro form
+				- Si los datos ingresados son validos
 					Se guardan
-				Se redirige a ('NombreDeEspacio':'Url')
-			Sino
-				Se vuelve a cargar el form
-			Se retorna la respuesta con render(request, 'nombreDelTemplate', {'contexto':contenido})
+				- Se redirige a ('NombreDeEspacio':'Url')
+			- Sino
+				- Se vuelve a cargar el form
+			- Se retorna la respuesta con render(request, 'nombreDelTemplate', {'contexto':contenido})
 
 
 	El formulario se importaria en la vista con
@@ -680,7 +682,54 @@
 
 --------------- LISTAR REGISTROS (VISTAS BASADAS EN FUNCIONES) ---------------
 
+	Vista de ejemplo
 
+	def mascota_list(request):
+		mascota = Mascota.objects.all()
+		contexto = {'mascotas':mascota}
+		return render(request, 'mascota/mascota_list.html', contexto)
+
+	En pseudocodigo:
+
+		- Definicion de la vista basada en funcion
+			- Definicion del QuerySet trayendo todos los objetos que estan en el modelo mascota
+			- Envio del QuerySet en la variable contexto, que tendra asignado el diccionario
+			- Retorno de la respuesta con render(request, 'nombreDelTemplate', variable)
+
+
+	Luego, para mostrar en el HTML lo que contiene el modelo se utilizo para este 
+	ejm el archivo HTML, en el cual un trozo de codigo es:
+
+		{% if mascotas %}
+			{% for mascota in mascotas %}
+				<tr>
+					<td>{{ mascota.id }}</td>
+					<td>{{ mascota.nombre }}</td>
+					<td>{{ mascota.sexo }}</td>
+					<td>{{ mascota.edad_aproximada }}</td>
+					<td>{{ mascota.fecha_rescate }}</td>
+					<td>{{ mascota.persona.nombre }} {{ mascota.persona.apellidos }}</td>
+				</tr>
+			{% endfor %}
+		{% else %}
+			<h1>No hay mascotas registradas</h1>
+		{% endif %}
+
+	En pseudo codigo:
+
+		- Si existen registros en nuestro contexto
+			- Para mascota en el contexto 'mascotas' (O generar el ciclo for para generar
+				un tr por cada registro de la tabla)
+				- Trae de mascota el id al td
+				- Trae de mascota el nombre al td
+				- Trae de mascota el sexo al td
+				- Trae de mascota la fecha de rescate al td
+				- Trae de mascota el nombre y apellidos de la persona al td
+			- Fin del ciclo for
+		- Sino
+			- Genera el h1 que dice: No hay mascotas registradas
+		- Fin del if
+
+		Esta es una manera muy sencilla de listar los registros de nuestros modelos.
 
 ------------------------------------------------------------------------------
-
