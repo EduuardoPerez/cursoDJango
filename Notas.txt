@@ -818,3 +818,77 @@
 		mascota = Mascota.objects.all().order_by('id')
 
 ------------------------------------------------------------------------------
+
+-------------- VISTAS BASADAS EN CLASES, LISTVIEW Y CREATEVIEW ---------------
+
+	A partir de DJango 1.3 tenemos las vistas basadas en clases. Que son vistas
+	genericas de las cuales podemos aprovechar las bondades de la programacion orientada
+	a objetos.
+
+	Tenemos dos tipos de vista provistas por DJango, la ListView y la CreateView.
+	La primera sirve para listar y la segunda para crear o guardar registros.
+
+	Luego de importar
+
+		from django.views.generic import ListView, CreateView
+
+
+	Se puede crear la siguiente clase para observar el uso del ListView
+
+	class MascotaList(ListView):
+		model = Mascota
+		template_name = 'mascota/mascota_list.html'
+
+	En pseudocodigo
+
+		- Declara la clase MascotaList que hereda de la clase ListView
+			- Se indica el modelo
+			- Se indica a que template se enviara el contexto
+
+	Se modifica en los urls
+
+		path('listar', MascotaList.as_view(), name='mascota_listar'),
+
+	Luego de haber importado la vista basada en clases en
+
+		from apps.mascota.views import index, mascota_view, mascota_list, mascota_edit, mascota_delete, MascotaList, MascotaCreate
+
+	Ahora cuando se haga la peticion a esta url se ejecutara la vista MascotaList, pero por ser una clase se le indica mediante el metodo as_view() que se va a ejecutar como una vista.
+
+	En el template mascota_list.html, como ya no estamos mandando nuestro contexto
+	como un diccionario que se llama mascota, nuestra ListView, lo manda como un
+	object_list, asi que se modifica como sigue:
+
+		{% if object_list %}
+			{% for mascota in object_list %}
+										-
+										-
+										-
+			{% endfor %}
+						-
+						-
+						-
+			{% endif %}
+
+
+	Para crear objetos podriamos tener algo como
+
+	class MascotaCreate(CreateView):
+		model = Mascota
+		form_class = MascotaForm
+		template_name = 'mascota/mascota_form.html'
+		success_url = reverse_lazy('mascota:mascota_listar')
+
+	En pseudocodigo:
+
+	- Declara la clase MascotaCreate que hereda de la vista generica CreateView
+		- Se le indica el modelo
+		- Se le indica que form se va a utilizar para generar esta vista
+		- Se le pasa el template
+		- Se redirige con el atributo success_url y el url resolver reverse_lazy
+
+	Se modifica el url bajo los mismos terminos que con la clase MascotaList
+
+		path('listar', MascotaList.as_view(), name='mascota_listar')
+
+------------------------------------------------------------------------------
