@@ -1,3 +1,28 @@
+----------------------------- CREAR ENTORNO VIRTUAL --------------------------
+
+	Instalar paquetes de Python:
+		- pip --proxy http://proxy.visa2.com.ar/proxy.pac:8083 install nombre_del_paquete
+		- pip3 install --proxy=http://proxy.visa2.com.ar/proxy.pac:8083 nombre_del_paquete
+
+	Actualizar pip:
+		- pip --proxy http://proxy.visa2.com.ar/proxy.pac:8083 install --upgrade pip
+		- python -m pip --proxy http://proxy.visa2.com.ar/proxy.pac:8083 install --upgrade pip
+
+	Remover paquetes:
+		- pip uninstall nombre_del_paquete
+
+	Instalar DJango
+		- pip3 install --proxy=http://proxy.visa2.com.ar/proxy.pac:8083 django
+
+	Instalar virtualenv
+		- python -m venv nombre_del_entorno_virtual
+
+	Instalar pip
+	Luego de descargar el archivo get-pip.py ejecutar
+		- python get-pip.py --proxy=http://proxy.visa2.com.ar/proxy.pac:8083
+
+------------------------------------------------------------------------------
+
 -------------------------------- CREAR PROYECTO ------------------------------
 
 	El
@@ -29,7 +54,7 @@
 
 --------------- CREAR APLICACIONES Y ESTRUCTURA DEL PROYECTO -----------------
 
-	Para ver la estructura del proyecto ver este video - video 2 - del curso
+	Para ver la estructura del proyecto ver este video - video 4 - del curso
 
 	Un proyecto en DJango es nuestra aplicacion web.
 
@@ -41,6 +66,15 @@
 	distinguir entre lo que es nuestra aplicacion web (el proyecto en si) y una
 	aplicacion de DJango (modulo o funcionalidad de nuestro proyecto (aplicacion
 	web)).
+
+	Una buena practica es crear una carpeta llamada apps que se encuentra en el
+	mismo nivel que el archivo manage.py, dentro de ella se debe crear el archivo
+	vacio con nombre
+
+		__init__.py
+
+	para que DJango la reconozca como una carpeta parte del proyecto. Luego posicionandose
+	en ella desde la consola se puede crear la app de DJango con el comando anterior.
 
 
 ------------------------------------------------------------------------------
@@ -70,6 +104,10 @@
 
 	de esta forma se dejaria de utilizar el ID que genera por defecto DJango y se
 	comienza a utilizar esta para identificar los campos de la tabla.
+
+	Para crear las tablas correspondientes al modelo en la BD se utiliza el comando
+
+		manage.py migrate
 
 ------------------------------------------------------------------------------
 
@@ -890,5 +928,31 @@
 	Se modifica el url bajo los mismos terminos que con la clase MascotaList
 
 		path('listar', MascotaList.as_view(), name='mascota_listar')
+
+------------------------------------------------------------------------------
+
+------------- UPDATEVIEW Y DELETEVIEW, VISTAS BASADAS EN CLASES --------------
+
+	Cuando se crean vistas que heredan de las vistas genericas de Django con
+	urls dinamicos piden por default el parametro pk (primary key). Entonces el configurar el url de la vista editar basada en clases, seria
+
+		path('editar/<pk>/', MascotaUpdate.as_view(), name='mascota_editar'),
+
+
+	Como se esta trabajando con listas basadas en clases hay que realizar una peque#a
+	modificacion al template de 'mascota_delete.html' en la seccion
+
+		<h3>¿Desea eliminar el registro de {{ mascota.nombre }}</h3>
+
+	Pues aca se esta accediendo al atributo para mostrar el nombre de la mascota.
+	Ya que la vista esta basada en clases manda el objeto como un object_list, entonces,
+	como lo que esta enviando es un object se accede al objeto y se le indica que
+	coloque el nombre
+
+		<h3>¿Desea eliminar el registro de {{ object.nombre }}</h3>
+
+	
+	Se pueden sobreescribir metodos de las clases genericas (como los POST, los
+	GET, los DELETE, los GET con TEXTDATA)
 
 ------------------------------------------------------------------------------
