@@ -956,3 +956,24 @@
 	GET, los DELETE, los GET con TEXTDATA)
 
 ------------------------------------------------------------------------------
+
+---------------------- CRUD CON DOS FORMULARIOS PARTE 1 ----------------------
+
+	Manipularemos dos forms de dos modelos distintos, pero, relacionados entre si
+	en un mismo template.
+
+	A partir de DJango 1.9 al asignar una llave foranea se le debe colocar el atributo
+	on_delete=models.CASCADE, al momento de crear el modelo, sino, no permitira
+	crearlo
+
+		persona = models.ForeignKey(Persona, null=True, blank=True, on_delete=models.CASCADE)
+
+	
+
+------------------------------------------------------------------------------
+
+--------------------- CRUD CON DOS FORMULARIOS PARTE 2 -----------------------
+
+	
+
+------------------------------------------------------------------------------
