@@ -508,6 +508,14 @@
 
 	Se crearan formularios para agregar registros a nuestros modelos.
 
+	Una buena practica es crear un archivo, dentro de las apps, llamado
+
+		forms.py
+
+	Y crear alli los modelos que manipularan los formularios y dentro de el seguir
+	la siguiente forma de crearlos.
+
+
 	Los forms de DJango se importan con
 
 		from django import forms
@@ -970,10 +978,153 @@
 
 	
 
+	Como se vio anteriormente, una buena practica es crear un archivo forms.py en
+	el cual luego de importar la clase para formularios de DJango y los modelos
+	con los que trabajaremos en ellos, ejm:
+
+		from django import forms
+		from apps.adopcion.models import Persona, Solicitud
+
+	Vamosa a comenzar a indicar cuales son los campos, las etiquetas para cada campo
+	y que tipo de campo de un formulario sera, en la clase meta correspondiente
+	a cada formulario (los cuales, tambien, son clases), ejm:
+
+		class PersonaForm(forms.ModelForm):
+
+			class Meta:
+				model = Persona
+				fields = [
+					'nombre',
+					'apellidos',
+					'edad',
+					'telefono',
+					'email',
+					'domicilio',
+				]
+				labels = {
+					'nombre': 'Nombre',
+					'apellidos': 'Apellidos',
+					'edad': 'Edad',
+					'telefono': 'Telefono',
+					'email': 'Correo electronico',
+					'domicilio': 'Domicilio',
+				}
+				widgets = {
+					'nombre':forms.TextInput(attrs={'class':'form-control'}),
+					'apellidos':forms.TextInput(attrs={'class':'form-control'}),
+					'edad':forms.TextInput(attrs={'class':'form-control'}),
+					'telefono':forms.TextInput(attrs={'class':'form-control'}),
+					'email':forms.TextInput(attrs={'class':'form-control'}),
+					'domicilio':forms.Textarea(attrs={'class':'form-control'}),
+				}
+
+
+		class SolicitudForm(forms.ModelForm):
+
+			class Meta:
+				model = Solicitud
+				fields = [
+					'numero_mascota',
+					'razones',
+				]
+				labels = {				
+					'numero_mascota': 'Numero de mascota',
+					'razones': 'Razones para adoptar',
+				}
+				widgets = {
+					'numero_mascota':forms.TextInput(attrs={'class':'form-control'}),
+					'razones':forms.Textarea(attrs={'class':'form-control'}),
+				}
+
+
+	Luego, en la vista (archivo views.py de la app adopcion) importaremos
+		from apps.adopcion.models import Persona, Solicitud
+		from apps.adopcion.forms import PersonaForm, SolicitudForm
+
+	Para poder hacer uso de ambos forms y de los modelos que se manipularan en
+	ellos
+
+		class SolicitudCreate(CreateView):
+			model = Solicitud
+			template_name = 'adopcion/Solicitud_form.html'
+			form_class = SolicitudForm
+			second_form_class = PersonaForm
+			success_url = reverse_lazy('adopcion:solicitud_listar')
+
+			def get_context_data(self, **kwargs):
+			    context = super(SolicitudCreate, self).get_context_data(**kwargs)
+			    if 'form' not in context:
+			    	context['form'] = self.form_class(self.request.GET)
+			    if 'form2' not in context:
+			    	context['form2'] = self.second_form_class(self.request.GET)
+			    return context
+
+			def post(self, request, *args, **kwargs):
+				self.object = self.get_object
+				form = self.form_class(request.POST)
+				form2 = self.second_form_class(request.POST)
+				if form.is_valid() and form2.is_valid():
+					solicitud = form.save(commit=False)
+					solicitud.persona = form2.save()
+					solicitud.save()
+					return HttpResponseRedirect(self.get_success_url())
+				else:
+					return self.render_to_response(self.get_context_data(form=form, form2=form2))
+	
+	En pseudocodigo seria:
+
+		- Declaracion de la vista basada en clases que hereda de CreateView
+			- Se indica el modelo con el que se trabajara en la vista
+			- Se indica a que template se enviara el contexto
+			- Se crea el primer formulario para ser agregado al contexto
+			- Se crea el segundo formulario para ser agregado al contexto
+			- Redirecciona a otra vista al obtener el success al querer guardar en
+				los forms
+			
+			- Se sobreescribe la funcion get_context_data
+				- Se toma el conexto que es igual a la superclase SolicitudCreate y tomando
+					el contexto
+				- Si form no esta en el contexto
+					- se agrega form al contexto al hacer el GET
+				- Si form2 no esta en el contexto
+					- Se asigna al contexto al haber un GET request
+				- Se retorna el contexto
+
+			- Se sobreescribe el metodo post
+				- Se accede al objeto
+				- Se toma la info de form
+				- Se toma la info de form2
+				- Si form y form2 son validos
+					- Se crea la variable que guardara el primer request pero sin guardar
+						en la base para poder guardar tambien los valores de form2
+					- Se ingresan en el atributo persona lo obtenido en form2 y se guardan
+						en la BD
+					- Se redirecciona al success_url qur lleva a la vista solicitud_listar
+				- Sino
+					Se devuelve el contexto, que son los forms (form1 y form2)
+
+
+	Ahora para cargar los forms en el template solicitud_form
+
+		{% extends 'base/base.html' %}
+
+		{% block content %}
+		<form method="post">
+			{% csrf_token %}
+			{{ form2.as_p }}
+			{{ form.as_p }}
+
+			<button type="submit">Guardar</button>
+		</form>
+		{% endblock %}
+
+	Entonces observamos que luego de pasar el token de seguridad de Django (csrf_token)
+	le pasamos el segundo y primer form
+
 ------------------------------------------------------------------------------
 
 --------------------- CRUD CON DOS FORMULARIOS PARTE 2 -----------------------
 
 	
 
-------------------------------------------------------------------------------
+------------------------------------------------------------------------------ 
