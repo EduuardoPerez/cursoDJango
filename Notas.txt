@@ -1125,6 +1125,78 @@
 
 --------------------- CRUD CON DOS FORMULARIOS PARTE 2 -----------------------
 
-	
+	En el archivo views.py de la app adopcion se tiene una nueva clase
+
+		SolicitudUpdate
+
+	Para actualizar la info de una solicitud. Para obtener la info de la solicitud
+	que se va a modificar, modificaremos dentre de esta clase la funcion
+
+		def get_context_data(self, **kwargs):
+			context = super(SolicitudUpdate, self).get_context_data(**kwargs)
+			pk = self.kwargs.get('pk', 0)
+			solicitud = self.model.objects.get(id=pk)
+			persona = self.second_model.objects.get(id=solicitud.persona_id)
+			if 'form' not in context:
+				context['form'] = self.form_class()
+			if 'form2' not in context:
+				context['form2'] = self.second_form_class(instance=persona)
+			context['id'] = pk
+			return context
+
+	En pseudocodigo
+
+		- Se redefine el get_context_data
+			- Se toma el contexto
+			- Se obtienen los kwargs en la variable pk
+			- Se contiene en la variable el objeto de la solicitud en el que el id sea
+				igual al pk definido anteriormente
+			- Se crea la variable que contendra el objeto de la persona que esta relacionada
+				a la solicitud (id=igual al objeto de solicitud y al atributo del id de
+				la persona)
+			- Si form no esta en el contexto
+				- El contexto del form sera igual al contexto.form_class
+			- Si form2 no esta en el contexto
+				-	El contexto del form2 sera igual a la instancia de la persona del
+					self.second_form_class
+			- La id del contexto sera igual al pk obtenido al principio
+			- Se retorna el contexto
+
+
+	Ahora para el metodo post
+
+		def post(self, request, *args, **kwargs):
+			self.object = self.get_object()
+			id_solicitud = kwargs['pk']
+			solicitud = self.model.objects.get(id=id_solicitud)
+			persona = self.second_model.objects.get(id=solicitud.persona_id)
+			form = self.form_class(request.POST, instance=solicitud)
+			form2 = self.second_form_class(request.POST, instance=persona)
+			if form.is_valid() and form2.is_valid():
+				form.save()
+				form2.save()
+				return HttpResponseRedirect(self.get_success_url())
+			else:
+				return HttpResponseRedirect(self.get_success_url())
+
+
+		- Se redefine el metodo post
+			- se obtiene el objeto
+			- Se obtiene de los kwargs el id de la solicitud
+			- Se crea la variable donde se asignara el objeto del modelo donde el id
+				sea igual al id de la solicitud
+			- Se obtiene el objeto de persona donde el ide sea igual a solicitud.persona_id
+			- Se recoge la info del form de manera instanciada para que se sobreescriba
+				el objeto. Si no se realiza de esta manera, se creara un nuevo objeto
+			- Se instancia a persona
+			- Si form y form2 son validos
+				- Se guarda form
+				-	Se guarda form2
+				- Se redirige a solitud_listar
+			- Sino
+				- Se redirige a solitud_listar
+
+				
+
 
 ------------------------------------------------------------------------------ 
