@@ -1196,7 +1196,79 @@
 			- Sino
 				- Se redirige a solitud_listar
 
-				
+------------------------------------------------------------------------------ 
+
+-------------------- CREAR REGISTRO DE USUARIOS (MODELO) --------------------- 
+
+	DJango tiene nos trae el modelo User y el form UserCreationForm, que los podemos
+	utilizar importando
+
+		from django.contrib.auth.models import User
+		from django.contrib.auth.forms import UserCreationForm
+
+	Y de la siguiente manera
+
+		class RegistroUsuario(CreateView):
+			model = User
+			template_name = 'usuario/registrar.html'
+			form_class = UserCreationForm
+			success_url = reverse_lazy('mascota:mascota_listar')
+
+	Este modelo, y este form, dependiendo de la version que se este utilizando de
+	DJango trae por default ciertas verificaciones. Como que las contrase#a coincida
+	con su verificacion, que tenga al menos 8 caracteres con numeros, letras y otros
+	caracteres permitidos, que no coincida el nombre de usuario con alguno ya guardado.
+
+	Pero, almacena en la BD solo el nombre de usuario y la contrase#a. Dejando campos
+	muy importantes de la tabla vacios, como el nombre, apellido y correo. Para
+	corregir esto, podemos crear el archivo 
+
+		forms.py
+
+	en la app que lo utilizaremos y realizar aca las modificaciones necesarias
+
+		from django.contrib.auth.models import User
+		from django.contrib.auth.forms import UserCreationForm
+
+		class RegistroForm(UserCreationForm):
+
+			class Meta:
+				model = User
+				fields = [
+					'username',
+					'first_name',
+					'last_name',
+					'email',
+				]
+				labels = {
+					'username': 'Nombre de usuario',
+					'first_name': 'Nombre',
+					'last_name': 'Apellidos',
+					'email': 'Correo',
+				}
+
+	Y ahora se debe importar ese form en la vista para poder hacer uso de el, en
+	lugar del form UserCreationForm
+
+	Luego, para mejorar la vista en el template
+
+		registrar.html
+
+	Se utilizan las clases de bootstrap y para hacer referencia a los fields del
+	contexto se coloca en el name de los inputs el nombre que tienen estos en el
+	forms.py, es decir 
+
+		first_name
+		last_name
+		username
+		email
+		password1
+		password2
+
+------------------------------------------------------------------------------ 
+
+--------------------------- CREAR LOGIN (FACILITO) --------------------------- 
+
 
 
 ------------------------------------------------------------------------------ 
