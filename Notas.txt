@@ -1269,6 +1269,62 @@
 
 --------------------------- CREAR LOGIN (FACILITO) --------------------------- 
 
+	Si del template
+
+		base.html
+
+	no queremos que aparezca un bloque en algun otro template lo que podemos hacer
+	es escribir este bloque, pero dejarlo vacio, ejm
+
+		{% block navbar%}
+		{% endblock %}
+
+	DJango posee una vista para realizar un login que se importa con
+
+		from django.contrib.auth import views as auth_views
+
+	Y realiza toda la validacion de nombre de usuario y las contrase#as
+
+	En el curso, se utilizara el login como index. En este caso, para poder 
+	utilizar esta vista como url inicial debemos configurar en el
+
+		urls.py
+
+	principal, la url de la vista de login luego de importarla como se dijo anteriormente
+
+		from django.contrib.auth import views as auth_views
+
+	Y se configurara en el urlpatterns
+
+		path('', auth_views.LoginView.as_view(template_name='index.html'), name="login"),
+
+	Donde se le esta pasando al metodo path como primer parametro la url de la
+	cual sera llamada, luego la vista en la cual se indica directamente el template_name
+	sin colocar que el
+
+		index.html
+
+	se encuentra en otro directorio por lo que este esta en la raiz de templates.
+	El ultimo parametro corresponde al nombre con el cual llamaremos la vista mas
+	adelante.
+
+	Para indicar a donde se direccionara cuando se realice el login debemos ir al
+	archivo
+
+		settings.py
+
+	Y configurar al final del documento la variable
+
+		LOGIN_REDIRECT_URL = reverse_lazy('adopcion:solicitud_listar')
+
+	Esto, luego de haber importado en settings.py
+
+		from django.urls import reverse_lazy
+
+------------------------------------------------------------------------------ 
+
+-------------------------- DECORADOR LOGIN REQUIRED -------------------------- 
+
 
 
 ------------------------------------------------------------------------------ 
