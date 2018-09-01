@@ -1558,3 +1558,41 @@
 		lista = serializers.serialize('json', Mascota.objects.all(), fields=['nombre', 'sexo'])
 
 ------------------------------------------------------------------------------ 
+
+--------------------------------- PAGINACION ---------------------------------
+
+	Vamos a paginar utilizando ListView. Lo realizaremos en el template mascota_list.html
+	con la vista
+
+		class MascotaList(ListView):
+			model = Mascota
+			template_name = 'mascota/mascota_list.html'
+			paginate_by = 2
+
+	Con el paginate_by se indican la cantidad de objetos del tipo mascota que queremos
+	que se vean.
+
+	Luego en el template agregamos los botones
+	
+		<ul class="pager">
+			<li>
+				{% if page_obj.has_previous %}
+					<a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+				{% endif %}
+			</li>
+			<li>
+				{% if page_obj.has_next %}
+				<a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+				{% endif %}
+			</li>
+		</ul>
+	
+	Donde en las tags if se indica que si el objeto de las paginas (page_obj) tiene
+	un anterior o un siguiente, se redirecciona al url dinamico enviando el parametro
+	get, que viene siendo
+
+		?page=
+
+	y se pasa la variable que vendria siendo la pagina luego del igual
+
+------------------------------------------------------------------------------ 
