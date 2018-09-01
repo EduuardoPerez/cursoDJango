@@ -1388,6 +1388,140 @@
 
 ---------------- RECUPERAR CONTRASEÑA POR CORREO (FACILITO) ------------------ 
 
-	
+	Lo primero que se debe hacer es ir al final del archivo
+
+		settings.py
+
+	Se deben hacer las siguientes configuraciones
+
+		EMAIL_USE_TLS = True
+		EMAIL_HOST = 'smtp.gmail.com'
+		EMAIL_PORT = 25
+		EMAIL_HOST_USER = 'edujpp1@gmail.com'
+		EMAIL_HOST_PASSWORD = '#2205DC6fmsn'
+		EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+	Donde
+
+		Variable del protocolo TLS
+		Servicio smtp de gmail
+		Puerto utilizado por el protocolo smtp
+		Correo del cual seran enviados los correos
+		Contrase#a del correo
+		Backends del mail
+
+	Se crearon 5 templates para cada uno de los casos que se presentan al momento
+	de reestablecer la contrase#a
+
+	1- password_reset_form.hmtl
+			Contendra un input donde se colocara el mail del usuario y el boton para
+			enviar
+
+	2- password_reset_done.hmtl
+			Template informativo que aparece al enviarse el mail.
+
+	3- password_reset_email.hmtl
+			Sera la vista que llegara al correo para que el usuario pueda cambiar la
+			contrase#a. Este template contendra.
+
+				Solicitaste reestablecimiento de contraseña.
+				Click en el siguiente link para crear una nueva contraseña.
+				{% block reset_link %}
+				{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
+				{% endblock %}
+				Tu nombre de usuario es: {{ user.get_username }}
+
+			donde, el bloque reset_link contendra algo muy importante. Que es el link
+			que va a ver el usuario. En el link, en una variable va el protocolo, luego
+			lo que seria el dominio del sitio, la url a la que va a responder y un token
+			que es un token unico, que puede ser usado una sola vez para reestablecer
+			una contrase#a. Esta urls es una con las que trabaja DJango.
+
+	4- password_reset_confirm.hmtl
+			Contiene un form 
+
+				{% extends 'base/base.html' %}
+				{% block navbar %}
+				{% endblock %}
+				{% block content %}
+
+				{% if validlink %}
+
+				<h1>Nueva contraseña</h1>
+
+				<form method="post">
+				{% csrf_token %}
+
+				{{ form.new_password1.errors }}
+				<label for="id_new_password1">Nueva contraseña:</label>
+				{{ form.new_password1 }}
+
+				{{ form.new_password2.errors }}
+				<label for="id_new_password2">Confirme contraseña:</label>{{ form.new_password2 }}
+				<input type="submit" value="Cambiar mi contraseña" />
+				</form>
+
+				{% else %}
+
+				<h1 class="text-center">ENLACE INVÁLIDO: ESTE ENLACE YA HA SIDO UTILIZADO</h1>
+
+				{% endif %}
+
+				{% endblock %}
+
+				en el cual se llama al atributo new_password1 y new_password2. Toda la
+				vista de DJango se encarga de hacer todo el proceso de la validacion de
+				la contrase#a. De de levantar los errores, que se hace con errors
+
+					form.new_password1.errors
+
+				El tag
+
+					{% if validlink %}
+
+				Se encarga de verificar que el link no haya sido utilizado.
+
+	5- password_reset_complete.hmtl
+			Muestra un mensaje que nos indica que ya se reestablecio la contrase#a y
+			posee un boton que nos redirecciona directamente a la pagina del login.
+
+
+
+	Para que todo esto funcione debemos configurar las urls globales en el archivo
+
+		urls.py
+
+	Se importa
+
+		from django.contrib.auth import views as auth_views
+
+	Y configurar las urls
+
+		path('reset/password_reset', auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html', email_template_name='registration/password_reset_email.html'), name="password_reset"),
+
+			En esta url ademas de indicar cual es el template, tambien debemos indicar cual es el template del email. Es decir, el que se enviara al correo
+
+	  path('reset/password_done', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name="password_reset_done"),
+
+	  path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html'), name="password_reset_confirm"),
+
+			<uidb64>/<token> -> haran que la url sea unica y solo pueda ser usada 1
+				vez
+
+		Es importante colocarles un
+
+			name
+
+		porue las vistas de DJango van a buscar esas urls y es super importante que
+		los nombres de las urls los coloquemos tal como estan.
+
+
+	Si vamos a utilizar un correo
+
+		gmail
+
+	Se debe ir a las configuraciones de la cuenta en la seccion de inicio de
+	sesion y seguridad o acceso y seguridad
+	y activar el permiso para el acceso de aplicaciones menos seguras.
 
 ------------------------------------------------------------------------------ 

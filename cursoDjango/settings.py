@@ -134,3 +134,10 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 LOGIN_REDIRECT_URL = reverse_lazy('adopcion:solicitud_listar')
 LOGOUT_REDIRECT_URL = reverse_lazy('login')
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'mail@mail.com'
+EMAIL_HOST_PASSWORD = 'contrase#a'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
