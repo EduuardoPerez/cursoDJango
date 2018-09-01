@@ -1595,4 +1595,61 @@
 
 	y se pasa la variable que vendria siendo la pagina luego del igual
 
+------------------------------------------------------------------------------
+
+----------------------- RESTFRAMEWORK MODELSERIALIZER ------------------------
+
+	El Django Restframework es un paquete que nos facilita la creacion de APIs
+
+
+	Se instala por medio de pip
+
+		pip install djangorestframework
+
+
+	Para utilizar el paquete crearemos un nuevo archivo dentro de la app usuario
+
+		serializers.py
+
+	en donde vamos a  importar
+
+		from rest_framework.serializers import ModelSerializer
+		from django.contrib.auth.models import User
+
+	Y crearemos la clase
+
+		class UserSerializer(ModelSerializer):
+
+			class Meta:
+				model = User
+				fields = ('firs_name', 'email')
+
+	Luego, crearemos una nueva vista en la app usuario luego de importar
+
+		import json
+		from rest_framework.views import APIView
+		from django.contrib.auth.models import User
+		from apps.usuario.serializers import UserSerializer
+
+		class UserAPI(APIView):
+			serializer = UserSerializer
+
+			def get(self, request, format=None):
+				lista = User.objects.all()
+				response = self.serializer(lista, many=True)
+
+				return HttpResponse(json.dumps(response.data), content_type='application/json')
+
+	Pseudocodigo de la clase
+
+		- Definicion de la clase que hereda de APIView
+			- Se indica en que serializador se basara
+
+			- Se sobreescribe el metodo get
+				- Se crea una lista que contenga todos objetos del modelo User
+				- Se serializa la lista en la variable response, colocando en true que
+					habran varios objetos
+
+				- Se retorna un json que contendra lo que existe en response	
+
 ------------------------------------------------------------------------------ 
