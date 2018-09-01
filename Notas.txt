@@ -1524,4 +1524,37 @@
 	sesion y seguridad o acceso y seguridad
 	y activar el permiso para el acceso de aplicaciones menos seguras.
 
+------------------------------------------------------------------------------
+
+---------------------------- SERIALIZAR OBJETOS ------------------------------
+
+	La serialización (o marshalling en inglés) consiste en un proceso de codificación
+	de un objeto en un medio de almacenamiento (como puede ser un archivo, o un
+	buffer de memoria) con el fin de transmitirlo a través de una conexión en red
+	como una serie de bytes o en un formato humanamente más legible como XML o JSON,
+	entre otros.
+
+	Serializaremos los objetos de nuestros modelos, para posteriormente poder consumirlos
+	como un servicio web.
+
+	Primero utilizaremos los serializer que nos trae DJango y luego un parquete
+	que se llama Restframework.
+
+	Importando
+
+		from django.http import HttpResponse
+		from django.core import serializers
+
+	Podemos realizar una vista basada en funcion que nos muestre todos los objetos
+	que existen de un modelo en forma de json
+
+		def listado(request):
+			lista = serializers.serialize('json', Mascota.objects.all())
+			return HttpResponse(lista, content_type='application/json')
+
+	tambien, modificando la segunda linea, lo podemos indicar que campos del modelo
+	queremos que se vean
+
+		lista = serializers.serialize('json', Mascota.objects.all(), fields=['nombre', 'sexo'])
+
 ------------------------------------------------------------------------------ 
