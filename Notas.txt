@@ -1325,6 +1325,69 @@
 
 -------------------------- DECORADOR LOGIN REQUIRED -------------------------- 
 
+	Se restringiran las urls para que solo sean visibles por los usuarios logueados.
 
+	Para poder restringir nuestrar urls vamos a utilizar un decorador que se llama
+	login_requiered y se importa en el archivo
+
+		urls.py
+
+	de la app donde se quiere	restringir la vista con
+
+		from django.contrib.auth.decorators import login_required
+
+	Y lo utilizamos en nuestras urls pasandole como parametro la vista, por ejemplo
+	para la app mascota
+
+		from django.urls import path, include
+		from apps.mascota.views import index, mascota_view, mascota_list, mascota_edit, mascota_delete, MascotaList, MascotaCreate, MascotaUpdate, MascotaDelete
+		from django.contrib.auth.decorators import login_required
+
+		urlpatterns = [
+		    path('', index, name='index'),
+		    path('nuevo', login_required(MascotaCreate.as_view()), name='mascota_crear'),
+		    path('listar', login_required(MascotaList.as_view()), name='mascota_listar'),
+		    path('editar/<pk>/', login_required(MascotaUpdate.as_view()), name='mascota_editar'),
+		    path('eliminar/<pk>/', login_required(MascotaDelete.as_view()), name='mascota_eliminar'),
+		]
+
+	luego, cuando queramos acceder a cualquiera de los urls de la app mascota y
+	no nos encontramos logueados, nos mostrara un error 404. Para que esto no ocurra y nos redireccione al login, debemos ir al archivo de urls globales
+
+		urls.py
+
+	y a la url del login le colocaremos accounts/login/
+
+		path('accounts/login/', auth_views.LoginView.as_view(template_name='index.html'), name="login"),
+
+	Solo que ahora el login dejara de ser la pagina principal de la web-app.
+
+
+
+	Para desloguearse (cerrar la sesion) con un boton salir, vamos de nuevo al archivo
+	de urls globales y de las vistas de autenticacion de DJango, las que se importan
+	con
+
+		from django.contrib.auth import views as auth_views
+
+	utilizaremos la LogoutView configurando el url
+
+		path('logout/', auth_views.LogoutView.as_view(), name="logout"),
+
+	Y para que funcione, en nuestro archivo
+
+		settings.py
+
+	tenemos que agregar la siguiente variable, luego de la variable LOGIN_REDIRECT_URL
+
+		LOGOUT_REDIRECT_URL = reverse_lazy('login')
+
+	Y asi, nos desloguea y nos redirecciona al login.
+
+------------------------------------------------------------------------------ 
+
+---------------- RECUPERAR CONTRASEÑA POR CORREO (FACILITO) ------------------ 
+
+	
 
 ------------------------------------------------------------------------------ 

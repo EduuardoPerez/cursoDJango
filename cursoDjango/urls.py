@@ -22,5 +22,6 @@ urlpatterns = [
     path('mascota/', include(('apps.mascota.urls', 'mascota'), namespace="mascota")),
     path('adopcion/', include(('apps.adopcion.urls', 'adopcion'), namespace="adopcion")),
     path('usuario/', include(('apps.usuario.urls', 'usuario'), namespace="usuario")),
-    path('', auth_views.LoginView.as_view(template_name='index.html'), name="login"),
+    path('accounts/login/', auth_views.LoginView.as_view(template_name='index.html'), name="login"),
+    path('logout/', auth_views.LogoutView.as_view(), name="logout"),
 ]
